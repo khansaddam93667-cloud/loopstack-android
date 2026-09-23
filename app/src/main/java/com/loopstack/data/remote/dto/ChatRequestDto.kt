@@ -4,7 +4,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class ChatRequestDto(
-    val model: String = "openai/auto",
+    val model: String = "auto",
     val messages: List<MessageDto>,
     val stream: Boolean = true
 )
