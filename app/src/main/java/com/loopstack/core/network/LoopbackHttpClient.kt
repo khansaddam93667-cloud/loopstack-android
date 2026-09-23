@@ -30,9 +30,9 @@ class LoopbackHttpClient @Inject constructor(
 
     private val client = HttpClient(engine) {
         install(HttpTimeout) {
-            connectTimeoutMillis = 20_000L
-            requestTimeoutMillis = 30_000L
-            socketTimeoutMillis = 30_000L
+            connectTimeoutMillis = 15_000L
+            requestTimeoutMillis = 60_000L
+            socketTimeoutMillis = 60_000L
         }
     }
 

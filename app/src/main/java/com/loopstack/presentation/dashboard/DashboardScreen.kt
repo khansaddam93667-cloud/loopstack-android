@@ -32,6 +32,8 @@ fun DashboardScreen(
     var showSettingsDialog by remember { mutableStateOf(false) }
     var showNetworkStatusDialog by remember { mutableStateOf(false) }
     var showHistoryLogsDialog by remember { mutableStateOf(false) }
+    var showAnalyticsSystemDialog by remember { mutableStateOf(false) }
+    var showModelGatewayDialog by remember { mutableStateOf(false) }
     var genericStatusDialogTitle by remember { mutableStateOf<String?>(null) }
 
     if (showSettingsDialog) {
@@ -44,6 +46,14 @@ fun DashboardScreen(
 
     if (showHistoryLogsDialog) {
         HistoryLogsDialog(onDismiss = { showHistoryLogsDialog = false })
+    }
+
+    if (showAnalyticsSystemDialog) {
+        AnalyticsSystemDialog(onDismiss = { showAnalyticsSystemDialog = false })
+    }
+
+    if (showModelGatewayDialog) {
+        ModelGatewayDialog(onDismiss = { showModelGatewayDialog = false })
     }
 
     genericStatusDialogTitle?.let { title ->
@@ -70,6 +80,8 @@ fun DashboardScreen(
                             "Settings" -> showSettingsDialog = true
                             "Network / Status" -> showNetworkStatusDialog = true
                             "History Logs" -> showHistoryLogsDialog = true
+                            "Analytics / System" -> showAnalyticsSystemDialog = true
+                            "Model Gateway" -> showModelGatewayDialog = true
                             else -> genericStatusDialogTitle = tool.title
                         }
                     }
