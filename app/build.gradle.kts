@@ -91,12 +91,15 @@ dependencies {
 
     implementation(libs.androidx.navigation.compose)
     implementation(libs.coil.compose)
+    implementation(libs.androidx.datastore.preferences)
 
     testImplementation(libs.junit)
     testImplementation(libs.robolectric)
     testImplementation(libs.ktor.client.mock)
     testImplementation(libs.kotlinx.coroutines.core)
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.8.1")
+    testImplementation(libs.turbine)
+    testImplementation(libs.mockito.core)
 }
 
 // Ignore aar metadata error for local build with AGP 8.4 on SDK 35
