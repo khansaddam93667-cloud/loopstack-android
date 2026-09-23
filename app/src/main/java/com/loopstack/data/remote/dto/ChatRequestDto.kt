@@ -1,3 +1,10 @@
 package com.loopstack.data.remote.dto
 
-data class ChatRequestDto(val message: String)
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class ChatRequestDto(
+    val model: String,
+    val messages: List<MessageDto>,
+    val stream: Boolean = true
+)
