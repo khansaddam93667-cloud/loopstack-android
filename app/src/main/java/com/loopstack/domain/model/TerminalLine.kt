@@ -1,3 +1,8 @@
 package com.loopstack.domain.model
 
-data class TerminalLine(val text: String)
+import java.util.UUID
+
+data class TerminalLine(
+    val id: String = UUID.randomUUID().toString(),
+    val text: String
+)
