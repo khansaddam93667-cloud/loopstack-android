@@ -28,7 +28,7 @@ data class DashboardUiState(
 class DashboardViewModel @Inject constructor() : ViewModel() {
 
     private val staticTools = listOf(
-        ToolCardModel(title = "Network", subtitle = "View internal API traffic"),
+        ToolCardModel(title = "Network / Status", subtitle = "View internal API traffic"),
         ToolCardModel(title = "Settings", subtitle = "App configurations"),
         ToolCardModel(title = "Analytics", subtitle = "Usage stats"),
         ToolCardModel(title = "Database", subtitle = "Local store info"),

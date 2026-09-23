@@ -76,15 +76,10 @@ class TerminalViewModel @Inject constructor(
         _terminalLines.add(TerminalLine(text = "> $text"))
         _inputText.value = ""
 
-        if (_isMockMode.value) {
-            _terminalLines.add(TerminalLine(text = "Mock response to: $text"))
-            return
-        }
-
         viewModelScope.launch {
             try {
                 val request = ChatRequestDto(
-                    model = "default",
+                    model = "omniroute",
                     messages = listOf(MessageDto(role = "user", content = text)),
                     stream = true
                 )
@@ -92,7 +87,9 @@ class TerminalViewModel @Inject constructor(
                 streamCompletionUseCase(request)
                     .chunked(60L)
                     .collect { chunks ->
-                        val combinedText = chunks.joinToString(separator = "") { it.delta ?: "" }
+                        val combinedText = chunks.joinToString(separator = "") { chunk ->
+                            chunk.choices?.firstOrNull()?.delta?.content ?: ""
+                        }
                         if (combinedText.isNotEmpty()) {
                             _terminalLines.add(TerminalLine(text = combinedText))
                             while (_terminalLines.size > 2000) {
@@ -101,7 +98,7 @@ class TerminalViewModel @Inject constructor(
                         }
                     }
             } catch (e: Exception) {
-                _terminalLines.add(TerminalLine(text = "Error: ${e.message}"))
+                _terminalLines.add(TerminalLine(text = "[ERROR] Connection failed: ${e.message}", isError = true))
             }
         }
     }

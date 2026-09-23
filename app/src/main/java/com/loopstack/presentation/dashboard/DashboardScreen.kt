@@ -1,6 +1,8 @@
 package com.loopstack.presentation.dashboard
 
-import android.widget.Toast
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Scaffold
@@ -26,19 +28,36 @@ fun DashboardScreen(
 ) {
     val dashboardUiState by dashboardViewModel.uiState.collectAsState()
     val heroCardUiState by heroCardViewModel.uiState.collectAsState()
-    val context = LocalContext.current
 
     var showSettingsDialog by remember { mutableStateOf(false) }
+    var showNetworkStatusDialog by remember { mutableStateOf(false) }
+    var showHistoryLogsDialog by remember { mutableStateOf(false) }
+    var genericStatusDialogTitle by remember { mutableStateOf<String?>(null) }
 
     if (showSettingsDialog) {
         SettingsDialog(onDismiss = { showSettingsDialog = false })
+    }
+
+    if (showNetworkStatusDialog) {
+        NetworkStatusDialog(onDismiss = { showNetworkStatusDialog = false })
+    }
+
+    if (showHistoryLogsDialog) {
+        HistoryLogsDialog(onDismiss = { showHistoryLogsDialog = false })
+    }
+
+    genericStatusDialogTitle?.let { title ->
+        GenericStatusDialog(
+            title = title,
+            onDismiss = { genericStatusDialogTitle = null }
+        )
     }
 
     Scaffold(
         topBar = { DashboardTopBar() }
     ) { paddingValues ->
         LazyColumn(
-            modifier = Modifier.padding(paddingValues)
+            modifier = Modifier.fillMaxSize().padding(paddingValues).navigationBarsPadding().imePadding()
         ) {
             item(key = "hero_card") {
                 HeroCard(uiState = heroCardUiState)
@@ -47,10 +66,11 @@ fun DashboardScreen(
                 ToolGrid(
                     tools = dashboardUiState.tools,
                     onToolClick = { tool ->
-                        if (tool.title == "Settings") {
-                            showSettingsDialog = true
-                        } else {
-                            Toast.makeText(context, "${tool.title} clicked", Toast.LENGTH_SHORT).show()
+                        when (tool.title) {
+                            "Settings" -> showSettingsDialog = true
+                            "Network / Status" -> showNetworkStatusDialog = true
+                            "History Logs" -> showHistoryLogsDialog = true
+                            else -> genericStatusDialogTitle = tool.title
                         }
                     }
                 )
