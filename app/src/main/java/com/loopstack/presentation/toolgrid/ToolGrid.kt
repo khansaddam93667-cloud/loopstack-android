@@ -12,7 +12,10 @@ import androidx.compose.ui.unit.dp
 import com.loopstack.presentation.dashboard.ToolCardModel
 
 @Composable
-fun ToolGrid(tools: List<ToolCardModel>) {
+fun ToolGrid(
+    tools: List<ToolCardModel>,
+    onToolClick: (ToolCardModel) -> Unit = {}
+) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(2),
         modifier = Modifier
@@ -26,7 +29,7 @@ fun ToolGrid(tools: List<ToolCardModel>) {
             items = tools,
             key = { it.id }
         ) { tool ->
-            ToolCard(tool = tool)
+            ToolCard(tool = tool, onClick = { onToolClick(tool) })
         }
     }
 }

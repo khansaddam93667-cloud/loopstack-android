@@ -1,11 +1,12 @@
 package com.loopstack.core.network
 
-import com.loopstack.BuildConfig
 import com.loopstack.data.remote.dto.ChatChunkDto
 import com.loopstack.data.remote.dto.ChatRequestDto
+import com.loopstack.domain.repository.SettingsRepository
 import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
+import io.ktor.client.request.header
 import io.ktor.client.request.preparePost
 import io.ktor.client.request.setBody
 import io.ktor.client.statement.bodyAsChannel
@@ -13,18 +14,19 @@ import io.ktor.http.ContentType
 import io.ktor.http.contentType
 import io.ktor.utils.io.core.readUTF8Line
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.decodeFromString
 import io.ktor.client.engine.HttpClientEngine
+import javax.inject.Inject
 
-class LoopbackHttpClient(
+class LoopbackHttpClient @Inject constructor(
+    private val settingsRepository: SettingsRepository,
     engine: HttpClientEngine = OkHttp.create()
 ) {
     private val json = Json { ignoreUnknownKeys = true }
-
-    val baseUrl = "http://127.0.0.1:${BuildConfig.LOOPBACK_PORT}"
 
     private val client = HttpClient(engine) {
         install(HttpTimeout) {
@@ -42,11 +44,27 @@ class LoopbackHttpClient(
         }
     }
 
+    suspend fun getBaseUrl(): String {
+        val port = settingsRepository.routerPort.first()
+        val pathPrefix = settingsRepository.apiPathPrefix.first()
+        val formattedPathPrefix = if (pathPrefix.startsWith("/")) pathPrefix else "/$pathPrefix"
+        return "http://127.0.0.1:$port$formattedPathPrefix"
+    }
+
+    suspend fun getApiKey(): String {
+        return settingsRepository.apiKey.first()
+    }
+
     suspend fun streamCompletion(request: ChatRequestDto): Flow<ChatChunkDto> = flow {
         val requestBody = json.encodeToString(request)
+        val baseUrl = getBaseUrl()
+        val token = getApiKey()
 
         client.preparePost("$baseUrl/chat/completions") {
             contentType(ContentType.Application.Json)
+            if (token.isNotEmpty()) {
+                header("Authorization", "Bearer $token")
+            }
             setBody(requestBody)
         }.execute { response ->
             val channel = response.bodyAsChannel()

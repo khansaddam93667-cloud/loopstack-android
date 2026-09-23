@@ -1,5 +1,6 @@
 package com.loopstack.presentation.toolgrid
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,11 +14,12 @@ import androidx.compose.ui.unit.dp
 import com.loopstack.presentation.dashboard.ToolCardModel
 
 @Composable
-fun ToolCard(tool: ToolCardModel) {
+fun ToolCard(tool: ToolCardModel, onClick: () -> Unit = {}) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(8.dp),
+            .padding(8.dp)
+            .clickable(onClick = onClick),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         )

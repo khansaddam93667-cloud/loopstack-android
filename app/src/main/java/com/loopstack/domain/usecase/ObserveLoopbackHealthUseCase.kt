@@ -15,7 +15,8 @@ class ObserveLoopbackHealthUseCase @Inject constructor(
     operator fun invoke(): Flow<LoopbackStatus> = flow {
         while (true) {
             val status = try {
-                val response = httpClient.healthClient.get("${httpClient.baseUrl}/health")
+                val baseUrl = httpClient.getBaseUrl()
+                val response = httpClient.healthClient.get("$baseUrl/health")
                 if (response.status.isSuccess()) {
                     LoopbackStatus.Active
                 } else {
