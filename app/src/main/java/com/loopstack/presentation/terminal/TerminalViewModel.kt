@@ -1,12 +1,8 @@
 package com.loopstack.presentation.terminal
 
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateListOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.loopstack.data.remote.dto.ChatChunkDto
 import com.loopstack.domain.model.TerminalLine
 import com.loopstack.domain.usecase.StreamCompletionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -28,19 +24,6 @@ class TerminalViewModel @Inject constructor(
 
     private val _terminalLines = mutableStateListOf<TerminalLine>()
     val terminalLines: List<TerminalLine> get() = _terminalLines
-
-    fun isAtBottom(lazyListState: LazyListState): State<Boolean> {
-        return derivedStateOf {
-            val layoutInfo = lazyListState.layoutInfo
-            val visibleItemsInfo = layoutInfo.visibleItemsInfo
-            if (layoutInfo.totalItemsCount == 0) {
-                true
-            } else {
-                val lastVisibleItem = visibleItemsInfo.lastOrNull() ?: return@derivedStateOf true
-                lastVisibleItem.index == layoutInfo.totalItemsCount - 1
-            }
-        }
-    }
 
     init {
         viewModelScope.launch {
