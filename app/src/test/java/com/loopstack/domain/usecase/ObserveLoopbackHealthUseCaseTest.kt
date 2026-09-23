@@ -1,4 +1,5 @@
 package com.loopstack.domain.usecase
+import com.loopstack.domain.repository.MockSettingsRepository
 
 import com.loopstack.core.network.LoopbackHttpClient
 import com.loopstack.domain.model.LoopbackStatus
@@ -25,7 +26,7 @@ class ObserveLoopbackHealthUseCaseTest {
             )
         }
 
-        val client = LoopbackHttpClient(mockEngine)
+        val client = LoopbackHttpClient(MockSettingsRepository(), mockEngine)
         val useCase = ObserveLoopbackHealthUseCase(client)
 
         val status = useCase().first()
@@ -41,7 +42,7 @@ class ObserveLoopbackHealthUseCaseTest {
             )
         }
 
-        val client = LoopbackHttpClient(mockEngine)
+        val client = LoopbackHttpClient(MockSettingsRepository(), mockEngine)
         val useCase = ObserveLoopbackHealthUseCase(client)
 
         val status = useCase().first()
@@ -54,7 +55,7 @@ class ObserveLoopbackHealthUseCaseTest {
             throw RuntimeException("Timeout")
         }
 
-        val client = LoopbackHttpClient(mockEngine)
+        val client = LoopbackHttpClient(MockSettingsRepository(), mockEngine)
         val useCase = ObserveLoopbackHealthUseCase(client)
 
         val status = useCase().first()

@@ -21,7 +21,7 @@ fun NavGraph() {
             )
         }
         composable("terminal") {
-            TerminalScreen()
+            TerminalScreen(navController = navController)
         }
     }
 }

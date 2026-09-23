@@ -1,4 +1,5 @@
 package com.loopstack.core.network
+import com.loopstack.domain.repository.MockSettingsRepository
 
 import com.loopstack.data.remote.dto.ChatChunkDto
 import com.loopstack.data.remote.dto.ChatRequestDto
@@ -42,7 +43,7 @@ class LoopbackHttpClientTest {
             )
         }
 
-        val client = LoopbackHttpClient(mockEngine)
+        val client = LoopbackHttpClient(MockSettingsRepository(), mockEngine)
         val request = ChatRequestDto(model = "test-model", messages = listOf(MessageDto("user", "hi")))
         val chunks = client.streamCompletion(request).toList()
 
@@ -70,7 +71,7 @@ class LoopbackHttpClientTest {
             )
         }
 
-        val client = LoopbackHttpClient(mockEngine)
+        val client = LoopbackHttpClient(MockSettingsRepository(), mockEngine)
         val request = ChatRequestDto(model = "test-model", messages = listOf(MessageDto("user", "hi")))
         val chunks = client.streamCompletion(request).toList()
 
@@ -84,7 +85,7 @@ class LoopbackHttpClientTest {
             throw RuntimeException("Timeout")
         }
 
-        val client = LoopbackHttpClient(mockEngine)
+        val client = LoopbackHttpClient(MockSettingsRepository(), mockEngine)
         val request = ChatRequestDto(model = "test-model", messages = listOf(MessageDto("user", "hi")))
 
         var caughtException = false
