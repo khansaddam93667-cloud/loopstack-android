@@ -3,6 +3,8 @@ package com.loopstack.presentation.dashboard
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -20,7 +22,7 @@ fun GenericStatusDialog(
         onDismissRequest = onDismiss,
         title = { Text(title) },
         text = {
-            Column(modifier = Modifier.fillMaxWidth()) {
+            Column(modifier = Modifier.fillMaxWidth().navigationBarsPadding().imePadding()) {
                 Text(text = "Functional status modal for $title")
             }
         },

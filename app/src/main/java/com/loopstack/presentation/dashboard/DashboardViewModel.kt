@@ -30,11 +30,11 @@ class DashboardViewModel @Inject constructor() : ViewModel() {
     private val staticTools = listOf(
         ToolCardModel(title = "Network / Status", subtitle = "View internal API traffic"),
         ToolCardModel(title = "Settings", subtitle = "App configurations"),
-        ToolCardModel(title = "Analytics", subtitle = "Usage stats"),
+        ToolCardModel(title = "Analytics / System", subtitle = "Device status"),
         ToolCardModel(title = "Database", subtitle = "Local store info"),
         ToolCardModel(title = "Plugins", subtitle = "Manage extensions"),
         ToolCardModel(title = "Security", subtitle = "App permissions"),
-        ToolCardModel(title = "Developer", subtitle = "Advanced tools"),
+        ToolCardModel(title = "Model Gateway", subtitle = "Provider details"),
         ToolCardModel(title = "Account", subtitle = "User profile")
     )
 

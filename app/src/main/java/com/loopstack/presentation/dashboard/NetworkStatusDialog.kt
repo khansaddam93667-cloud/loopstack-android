@@ -3,6 +3,8 @@ package com.loopstack.presentation.dashboard
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -52,7 +54,7 @@ fun NetworkStatusDialog(
         onDismissRequest = onDismiss,
         title = { Text("Network Status") },
         text = {
-            Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+            Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).navigationBarsPadding().imePadding()) {
                 Text(
                     text = pingResult,
                     fontFamily = FontFamily.Monospace,

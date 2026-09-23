@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
@@ -34,7 +36,7 @@ fun HistoryLogsDialog(
         onDismissRequest = onDismiss,
         title = { Text("History Logs") },
         text = {
-            Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+            Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState()).navigationBarsPadding().imePadding()) {
                 if (logs.isEmpty()) {
                     Text("No past sessions found.")
                 } else {
