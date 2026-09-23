@@ -79,7 +79,6 @@ class TerminalViewModel @Inject constructor(
         viewModelScope.launch {
             try {
                 val request = ChatRequestDto(
-                    model = "omniroute",
                     messages = listOf(MessageDto(role = "user", content = text)),
                     stream = true
                 )
