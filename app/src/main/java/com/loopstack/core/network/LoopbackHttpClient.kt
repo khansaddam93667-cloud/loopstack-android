@@ -26,7 +26,7 @@ class LoopbackHttpClient @Inject constructor(
     private val settingsRepository: SettingsRepository,
     engine: HttpClientEngine = OkHttp.create()
 ) {
-    private val json = Json { ignoreUnknownKeys = true; isLenient = true }
+    private val json = Json { ignoreUnknownKeys = true; isLenient = true; encodeDefaults = true }
 
     private val client = HttpClient(engine) {
         install(HttpTimeout) {

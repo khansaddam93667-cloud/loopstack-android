@@ -22,8 +22,8 @@ class LoopbackHttpClientTest {
     fun `streamCompletion uses default openai-auto model`() = runBlocking {
         var capturedBody = ""
         val mockEngine = MockEngine { request ->
-            val body = request.body
-            capturedBody = if (body is io.ktor.client.content.TextContent) body.text else ""
+            val requestBody = request.body.toString()
+            capturedBody = requestBody
             respond(
                 content = "data: [DONE]\n\n",
                 status = HttpStatusCode.OK,
@@ -33,7 +33,7 @@ class LoopbackHttpClientTest {
         val client = LoopbackHttpClient(MockSettingsRepository(), mockEngine)
         val request = ChatRequestDto(messages = listOf(MessageDto("user", "hi")))
         client.streamCompletion(request).toList()
-        assert(capturedBody.contains(""model":"openai/auto""))
+        assert(capturedBody.contains("\"model\":\"openai/auto\""))
     }
 
     @Test

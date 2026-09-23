@@ -11,7 +11,8 @@ class ChatRequestDtoTest {
         val request = ChatRequestDto(
             messages = listOf(MessageDto(role = "user", content = "hello"))
         )
-        val jsonString = Json.encodeToString(request)
+        val json = Json { encodeDefaults = true }
+        val jsonString = json.encodeToString(request)
         assertTrue(jsonString.contains("\"model\":\"openai/auto\""))
     }
 }
