@@ -26,7 +26,7 @@ class LoopbackHttpClient @Inject constructor(
     private val settingsRepository: SettingsRepository,
     engine: HttpClientEngine = OkHttp.create()
 ) {
-    private val json = Json { ignoreUnknownKeys = true }
+    private val json = Json { ignoreUnknownKeys = true; isLenient = true }
 
     private val client = HttpClient(engine) {
         install(HttpTimeout) {
@@ -60,31 +60,38 @@ class LoopbackHttpClient @Inject constructor(
         val baseUrl = getBaseUrl()
         val token = getApiKey()
 
-        client.preparePost("$baseUrl/chat/completions") {
-            contentType(ContentType.Application.Json)
-            if (token.isNotEmpty()) {
-                header("Authorization", "Bearer $token")
-            }
-            setBody(requestBody)
-        }.execute { response ->
-            val channel = response.bodyAsChannel()
-            while (!channel.isClosedForRead) {
-                val line = channel.readUTF8Line(limit = 8192)
-                if (line != null && line.startsWith("data: ")) {
-                    val dataStr = line.removePrefix("data: ").trim()
-                    if (dataStr == "[DONE]") {
-                        break
-                    }
-                    if (dataStr.isNotEmpty()) {
-                        try {
-                            val chunk = json.decodeFromString<ChatChunkDto>(dataStr)
-                            emit(chunk)
-                        } catch (e: Exception) {
-                            // Ignored or handle parsing error
+        try {
+            client.preparePost("$baseUrl/chat/completions") {
+                contentType(ContentType.Application.Json)
+                if (token.isNotEmpty()) {
+                    header("Authorization", "Bearer $token")
+                }
+                setBody(requestBody)
+            }.execute { response ->
+                if (response.status.value !in 200..299) {
+                    throw Exception("HTTP ${response.status.value}: ${response.status.description}")
+                }
+                val channel = response.bodyAsChannel()
+                while (!channel.isClosedForRead) {
+                    val line = channel.readUTF8Line(limit = 8192)
+                    if (line != null && line.startsWith("data: ")) {
+                        val dataStr = line.removePrefix("data: ").trim()
+                        if (dataStr == "[DONE]") {
+                            break
+                        }
+                        if (dataStr.isNotEmpty()) {
+                            try {
+                                val chunk = json.decodeFromString<ChatChunkDto>(dataStr)
+                                emit(chunk)
+                            } catch (e: Exception) {
+                                // Ignored or handle parsing error
+                            }
                         }
                     }
                 }
             }
+        } catch (e: Exception) {
+            throw e
         }
     }
 }

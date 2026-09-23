@@ -21,15 +21,15 @@ class LoopbackHttpClientTest {
     @Test
     fun `streamCompletion emits chunks successfully`() = runBlocking {
         val sseResponse = """
-            data: {"delta":"Hello"}
+            data: {"choices":[{"delta":{"content":"Hello"}}]}
 
-            data: {"delta":" "}
+            data: {"choices":[{"delta":{"content":" "}}]}
 
-            data: {"delta":"World"}
+            data: {"choices":[{"delta":{"content":"World"}}]}
 
-            data: {"delta":"!"}
+            data: {"choices":[{"delta":{"content":"!"}}]}
 
-            data: {"finishReason":"stop"}
+            data: {"choices":[{"finish_reason":"stop"}]}
 
             data: [DONE]
 
@@ -48,14 +48,14 @@ class LoopbackHttpClientTest {
         val chunks = client.streamCompletion(request).toList()
 
         assertEquals(5, chunks.size)
-        assertEquals("Hello", chunks[0].delta)
-        assertEquals("stop", chunks[4].finishReason)
+        assertEquals("Hello", chunks[0].choices?.firstOrNull()?.delta?.content)
+        assertEquals("stop", chunks[4].choices?.firstOrNull()?.finish_reason)
     }
 
     @Test
     fun `streamCompletion handles fallback correctly`() = runBlocking {
         val sseResponse = """
-            data: {"delta":"Part 1"}
+            data: {"choices":[{"delta":{"content":"Part 1"}}]}
 
             data: {"isFallback":true}
 

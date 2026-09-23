@@ -1,12 +1,25 @@
 package com.loopstack.data.remote.dto
 
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.SerialName
+
+@Serializable
+data class DeltaDto(
+    val content: String? = null
+)
+
+@Serializable
+data class ChoiceDto(
+    val index: Int = 0,
+    val delta: DeltaDto? = null,
+    val finish_reason: String? = null
+)
 
 @Serializable
 data class ChatChunkDto(
-    val delta: String? = null,
+    val id: String? = null,
+    val `object`: String? = null,
+    val created: Long? = null,
     val model: String? = null,
-    val finishReason: String? = null,
-    val isFallback: Boolean = false
+    val choices: List<ChoiceDto>? = null,
+    val isFallback: Boolean = false // Keep existing properties if needed by other components, though we could just rely on OpenAI schema.
 )
