@@ -15,6 +15,12 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
 import android.util.Log
+import com.loopstack.domain.repository.SettingsRepository
+import io.ktor.client.request.header
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.channelFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.launch
 
 @Serializable
 data class ModelsResponse(val data: List<ModelData>)
@@ -22,7 +28,17 @@ data class ModelsResponse(val data: List<ModelData>)
 @Serializable
 data class ModelData(val id: String)
 
-class ServerStatusRepositoryImpl @Inject constructor() : ServerStatusRepository {
+
+
+class ServerStatusRepositoryImpl @Inject constructor(
+    private val settingsRepository: SettingsRepository
+) : ServerStatusRepository {
+
+    private val manualStatusUpdates = MutableSharedFlow<LoopbackStatus>(extraBufferCapacity = 1)
+
+    override fun forceActiveStatus(providerName: String) {
+        manualStatusUpdates.tryEmit(LoopbackStatus.Active(providerName))
+    }
 
     private val json = Json { ignoreUnknownKeys = true; isLenient = true }
 
@@ -34,12 +50,22 @@ class ServerStatusRepositoryImpl @Inject constructor() : ServerStatusRepository 
         }
     }
 
-    override fun observeServerStatus(): Flow<LoopbackStatus> = flow {
+    override fun observeServerStatus(): Flow<LoopbackStatus> = channelFlow {
+        launch {
+            manualStatusUpdates.collect {
+                send(it)
+            }
+        }
+        launch {
         while (true) {
             val status = try {
-                val response = client.get("http://127.0.0.1:20128/v1/models")
+                val apiKey = settingsRepository.apiKey.first()
+                val token = if (apiKey.isNotBlank()) apiKey else "local"
+                val response = client.get("http://127.0.0.1:20128/v1/models") {
+                    header("Authorization", "Bearer $token")
+                }
                 Log.d("OmniRoutePing", "Response status: ${response.status}")
-                if (response.status.isSuccess()) {
+                if (response.status.value in 200..299) {
                     val body = response.bodyAsText()
                     val providerName = try {
                         val parsed = json.decodeFromString<ModelsResponse>(body)
@@ -57,8 +83,9 @@ class ServerStatusRepositoryImpl @Inject constructor() : ServerStatusRepository 
                 LoopbackStatus.Inactive
             }
 
-            emit(status)
+            send(status)
             delay(10_000L) // Adjust the polling interval if necessary
+        }
         }
     }
 }

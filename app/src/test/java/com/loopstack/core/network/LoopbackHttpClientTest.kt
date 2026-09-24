@@ -1,5 +1,6 @@
 package com.loopstack.core.network
 import com.loopstack.domain.repository.MockSettingsRepository
+import com.loopstack.domain.repository.MockServerStatusRepository
 
 import com.loopstack.data.remote.dto.ChatChunkDto
 import com.loopstack.data.remote.dto.ChatRequestDto
@@ -30,7 +31,7 @@ class LoopbackHttpClientTest {
                 headers = headersOf(HttpHeaders.ContentType, ContentType.Text.EventStream.toString())
             )
         }
-        val client = LoopbackHttpClient(MockSettingsRepository(), mockEngine)
+        val client = LoopbackHttpClient(MockSettingsRepository(), MockServerStatusRepository(), mockEngine)
         val request = ChatRequestDto(messages = listOf(MessageDto("user", "hi")))
         client.streamCompletion(request).toList()
         assert(capturedBody.contains("\"model\":\"auto\""))
@@ -61,7 +62,7 @@ class LoopbackHttpClientTest {
             )
         }
 
-        val client = LoopbackHttpClient(MockSettingsRepository(), mockEngine)
+        val client = LoopbackHttpClient(MockSettingsRepository(), MockServerStatusRepository(), mockEngine)
         val request = ChatRequestDto(model = "test-model", messages = listOf(MessageDto("user", "hi")))
         val chunks = client.streamCompletion(request).toList()
 
@@ -89,7 +90,7 @@ class LoopbackHttpClientTest {
             )
         }
 
-        val client = LoopbackHttpClient(MockSettingsRepository(), mockEngine)
+        val client = LoopbackHttpClient(MockSettingsRepository(), MockServerStatusRepository(), mockEngine)
         val request = ChatRequestDto(model = "test-model", messages = listOf(MessageDto("user", "hi")))
         val chunks = client.streamCompletion(request).toList()
 
@@ -103,7 +104,7 @@ class LoopbackHttpClientTest {
             throw RuntimeException("Timeout")
         }
 
-        val client = LoopbackHttpClient(MockSettingsRepository(), mockEngine)
+        val client = LoopbackHttpClient(MockSettingsRepository(), MockServerStatusRepository(), mockEngine)
         val request = ChatRequestDto(model = "test-model", messages = listOf(MessageDto("user", "hi")))
 
         var caughtException = false
