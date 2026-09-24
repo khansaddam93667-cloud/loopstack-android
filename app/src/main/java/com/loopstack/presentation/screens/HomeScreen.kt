@@ -82,7 +82,6 @@ fun HomeScreen(
                             "Database" -> showDatabaseDialog = true
                             "Security" -> onNavigateTo("security")
                             "Plugins" -> onNavigateTo("plugins")
-                            else -> {}
                         }
                     }
                 )
