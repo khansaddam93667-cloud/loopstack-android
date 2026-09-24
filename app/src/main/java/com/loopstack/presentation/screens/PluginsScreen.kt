@@ -22,30 +22,23 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 
 data class PluginItem(val id: String, val name: String, val description: String, val isEnabled: Boolean = false)
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun PluginsScreen(
-    onNavigateBack: () -> Unit
+    onNavigateBack: () -> Unit,
+    viewModel: PluginViewModel = hiltViewModel()
 ) {
-    val pluginsList = remember {
-        listOf(
-            PluginItem("1", "Shell Extension", "Execute shell commands directly.", true),
-            PluginItem("2", "Git Integration", "Manage git repositories from tools.", false),
-            PluginItem("3", "Python Runtime", "Run Python scripts within LoopStack.", true),
-            PluginItem("4", "Network Scanner", "Scan local network for devices.", false)
-        )
-    }
+    val pluginsList by viewModel.plugins.collectAsState()
 
     Scaffold(
         topBar = {
@@ -78,7 +71,10 @@ fun PluginsScreen(
                 modifier = Modifier.fillMaxWidth()
             ) {
                 items(pluginsList, key = { it.id }) { plugin ->
-                    PluginCard(plugin)
+                    PluginCard(
+                        plugin = plugin,
+                        onToggle = { isEnabled -> viewModel.togglePlugin(plugin.id, isEnabled) }
+                    )
                 }
             }
         }
@@ -86,9 +82,7 @@ fun PluginsScreen(
 }
 
 @Composable
-fun PluginCard(plugin: PluginItem) {
-    var isEnabled by remember { mutableStateOf(plugin.isEnabled) }
-
+fun PluginCard(plugin: PluginItem, onToggle: (Boolean) -> Unit) {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
@@ -115,8 +109,8 @@ fun PluginCard(plugin: PluginItem) {
                 )
             }
             Switch(
-                checked = isEnabled,
-                onCheckedChange = { isEnabled = it }
+                checked = plugin.isEnabled,
+                onCheckedChange = onToggle
             )
         }
     }
