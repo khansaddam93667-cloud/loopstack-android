@@ -4,7 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.loopstack.presentation.dashboard.DashboardScreen
+import com.loopstack.presentation.screens.AnalyticsScreen
+import com.loopstack.presentation.screens.HistoryScreen
+import com.loopstack.presentation.screens.HomeScreen
+import com.loopstack.presentation.screens.PluginsScreen
+import com.loopstack.presentation.screens.SecurityScreen
 import com.loopstack.presentation.terminal.TerminalScreen
 
 @Composable
@@ -16,12 +20,17 @@ fun NavGraph() {
         startDestination = "dashboard"
     ) {
         composable("dashboard") {
-            DashboardScreen(
-                onNavigateToTerminal = { navController.navigate("terminal") }
+            HomeScreen(
+                onNavigateToTerminal = { navController.navigate("terminal") },
+                onNavigateTo = { route -> navController.navigate(route) }
             )
         }
         composable("terminal") {
             TerminalScreen(navController = navController)
         }
+        composable("history") { HistoryScreen(onNavigateBack = { navController.popBackStack() }) }
+        composable("analytics") { AnalyticsScreen(onNavigateBack = { navController.popBackStack() }) }
+        composable("security") { SecurityScreen(onNavigateBack = { navController.popBackStack() }) }
+        composable("plugins") { PluginsScreen(onNavigateBack = { navController.popBackStack() }) }
     }
 }

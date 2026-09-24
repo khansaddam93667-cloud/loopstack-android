@@ -1,5 +1,7 @@
 package com.loopstack.core.theme
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.graphics.Color
@@ -10,7 +12,6 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.graphics.asComposeRenderEffect
 
 fun Modifier.neonGlow(
     color: Color,
@@ -46,13 +47,9 @@ fun Modifier.neonGlow(
 }
 
 fun Modifier.glassmorphic(
-    alpha: Float = 0.8f,
-    blurRadius: Float = 16f
-) = this.graphicsLayer {
-    this.alpha = alpha
-    if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.S) {
-        renderEffect = android.graphics.RenderEffect.createBlurEffect(
-            blurRadius, blurRadius, android.graphics.Shader.TileMode.CLAMP
-        ).asComposeRenderEffect()
-    }
-}
+    alpha: Float = 0.85f,
+    blurRadius: Float = 0f
+) = this.background(
+    color = Color(0x1AFFFFFF),
+    shape = RoundedCornerShape(16.dp)
+)

@@ -1,4 +1,4 @@
-package com.loopstack.presentation.dashboard
+package com.loopstack.presentation.screens
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.imePadding
@@ -13,16 +13,26 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.loopstack.presentation.dashboard.DashboardTopBar
+import com.loopstack.presentation.dashboard.DashboardViewModel
+import com.loopstack.presentation.dashboard.ExpandableToolchainSection
+import com.loopstack.presentation.dashboard.SecondaryWorkflowBanner
+import com.loopstack.presentation.dashboard.TerminalViewportEntryPoint
 import com.loopstack.presentation.herocard.HeroCard
 import com.loopstack.presentation.herocard.HeroCardViewModel
 import com.loopstack.presentation.toolgrid.ToolGrid
+
+// Retain non-requested dialogs as dialogs
+import com.loopstack.presentation.dashboard.DatabaseDialog
+import com.loopstack.presentation.dashboard.ModelGatewayDialog
+import com.loopstack.presentation.dashboard.NetworkStatusDialog
 import com.loopstack.presentation.settings.SettingsDialog
 
 @Composable
-fun DashboardScreen(
+fun HomeScreen(
     onNavigateToTerminal: () -> Unit,
+    onNavigateTo: (String) -> Unit,
     dashboardViewModel: DashboardViewModel = hiltViewModel(),
     heroCardViewModel: HeroCardViewModel = hiltViewModel()
 ) {
@@ -31,12 +41,8 @@ fun DashboardScreen(
 
     var showSettingsDialog by remember { mutableStateOf(false) }
     var showNetworkStatusDialog by remember { mutableStateOf(false) }
-    var showHistoryLogsDialog by remember { mutableStateOf(false) }
-    var showAnalyticsSystemDialog by remember { mutableStateOf(false) }
     var showModelGatewayDialog by remember { mutableStateOf(false) }
     var showDatabaseDialog by remember { mutableStateOf(false) }
-    var showSecurityDialog by remember { mutableStateOf(false) }
-    var genericStatusDialogTitle by remember { mutableStateOf<String?>(null) }
 
     if (showSettingsDialog) {
         SettingsDialog(onDismiss = { showSettingsDialog = false })
@@ -46,31 +52,12 @@ fun DashboardScreen(
         NetworkStatusDialog(onDismiss = { showNetworkStatusDialog = false })
     }
 
-    if (showHistoryLogsDialog) {
-        HistoryLogsDialog(onDismiss = { showHistoryLogsDialog = false })
-    }
-
-    if (showAnalyticsSystemDialog) {
-        AnalyticsSystemDialog(onDismiss = { showAnalyticsSystemDialog = false })
-    }
-
     if (showModelGatewayDialog) {
         ModelGatewayDialog(onDismiss = { showModelGatewayDialog = false })
     }
 
     if (showDatabaseDialog) {
         DatabaseDialog(onDismiss = { showDatabaseDialog = false })
-    }
-
-    if (showSecurityDialog) {
-        SecurityDialog(onDismiss = { showSecurityDialog = false })
-    }
-
-    genericStatusDialogTitle?.let { title ->
-        GenericStatusDialog(
-            title = title,
-            onDismiss = { genericStatusDialogTitle = null }
-        )
     }
 
     Scaffold(
@@ -89,12 +76,13 @@ fun DashboardScreen(
                         when (tool.title) {
                             "Settings" -> showSettingsDialog = true
                             "Network / Status" -> showNetworkStatusDialog = true
-                            "History Logs" -> showHistoryLogsDialog = true
-                            "Analytics / System" -> showAnalyticsSystemDialog = true
+                            "History Logs" -> onNavigateTo("history")
+                            "Analytics / System" -> onNavigateTo("analytics")
                             "Model Gateway" -> showModelGatewayDialog = true
                             "Database" -> showDatabaseDialog = true
-                            "Security" -> showSecurityDialog = true
-                            else -> genericStatusDialogTitle = tool.title
+                            "Security" -> onNavigateTo("security")
+                            "Plugins" -> onNavigateTo("plugins")
+                            else -> {}
                         }
                     }
                 )
