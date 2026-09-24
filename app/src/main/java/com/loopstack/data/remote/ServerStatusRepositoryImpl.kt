@@ -14,6 +14,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import javax.inject.Inject
+import android.util.Log
 
 @Serializable
 data class ModelsResponse(val data: List<ModelData>)
@@ -23,7 +24,7 @@ data class ModelData(val id: String)
 
 class ServerStatusRepositoryImpl @Inject constructor() : ServerStatusRepository {
 
-    private val json = Json { ignoreUnknownKeys = true }
+    private val json = Json { ignoreUnknownKeys = true; isLenient = true }
 
     private val client = HttpClient(OkHttp) {
         install(HttpTimeout) {
@@ -37,19 +38,22 @@ class ServerStatusRepositoryImpl @Inject constructor() : ServerStatusRepository 
         while (true) {
             val status = try {
                 val response = client.get("http://127.0.0.1:20128/v1/models")
+                Log.d("OmniRoutePing", "Response status: ${response.status}")
                 if (response.status.isSuccess()) {
                     val body = response.bodyAsText()
                     val providerName = try {
                         val parsed = json.decodeFromString<ModelsResponse>(body)
-                        parsed.data.firstOrNull()?.id ?: "Termux Active"
+                        if (parsed.data.isNotEmpty()) parsed.data.first().id else "OmniRoute Local"
                     } catch (e: Exception) {
-                        "Termux Active"
+                        Log.d("OmniRoutePing", "Exception parsing JSON: ${e.message}")
+                        "OmniRoute Local"
                     }
                     LoopbackStatus.Active(providerName)
                 } else {
                     LoopbackStatus.Inactive
                 }
             } catch (e: Exception) {
+                Log.d("OmniRoutePing", "Exception during HTTP ping: ${e.message}")
                 LoopbackStatus.Inactive
             }
 
