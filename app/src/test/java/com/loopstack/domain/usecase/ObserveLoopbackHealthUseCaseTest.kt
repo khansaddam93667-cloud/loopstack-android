@@ -11,6 +11,7 @@ import kotlinx.coroutines.flow.Flow
 
 class MockServerStatusRepository(private val statusToReturn: LoopbackStatus) : ServerStatusRepository {
     override fun observeServerStatus(): Flow<LoopbackStatus> = flowOf(statusToReturn)
+    override fun forceActiveStatus(providerName: String) {}
 }
 
 class ObserveLoopbackHealthUseCaseTest {
