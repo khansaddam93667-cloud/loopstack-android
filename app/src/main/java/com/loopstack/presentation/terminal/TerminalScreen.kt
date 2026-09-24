@@ -31,6 +31,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -48,6 +51,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.Arrangement
 import com.loopstack.core.theme.ElectricCyan
+import com.loopstack.core.theme.neonGlow
 import com.loopstack.core.theme.CyberViolet
 
 fun LazyListState.isAtBottom(): Boolean {
@@ -66,9 +70,7 @@ fun TerminalScreen(
 ) {
     val lines = viewModel.terminalLines
     val inputText by viewModel.inputText.collectAsState()
-    val isMockMode by viewModel.isMockMode.collectAsState()
     val status by viewModel.loopbackStatus.collectAsState()
-    val baseUrl by viewModel.baseUrl.collectAsState()
 
     val listState = rememberLazyListState()
 
@@ -83,6 +85,18 @@ fun TerminalScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Terminal") },
+                actions = {
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .size(8.dp)
+                            .background(
+                                color = if (status == LoopbackStatus.Active) Color(0xFF00FF66) else Color(0xFFFFB300),
+                                shape = androidx.compose.foundation.shape.CircleShape
+                            )
+                            .neonGlow(if (status == LoopbackStatus.Active) Color(0xFF00FF66) else Color(0xFFFFB300), 4.dp)
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
@@ -101,10 +115,12 @@ fun TerminalScreen(
                         .padding(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
+                    Text("root@localhost:~# ", color = Color(0xFF00FF66), fontFamily = FontFamily.Monospace)
                     OutlinedTextField(
                         value = inputText,
                         onValueChange = viewModel::updateInputText,
                         modifier = Modifier.weight(1f),
+                        textStyle = TextStyle(fontFamily = FontFamily.Monospace, color = MaterialTheme.colorScheme.onSurface),
                         placeholder = { Text("Enter prompt...") }
                     )
                     IconButton(onClick = viewModel::sendMessage) {
@@ -119,40 +135,12 @@ fun TerminalScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (status == LoopbackStatus.Inactive) {
-                Surface(
-                    color = MaterialTheme.colorScheme.errorContainer,
-                    modifier = Modifier.fillMaxWidth()
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "Termux Inactive — Connecting to $baseUrl",
-                                color = MaterialTheme.colorScheme.onErrorContainer,
-                                style = MaterialTheme.typography.bodyMedium
-                            )
-                            Text(
-                                text = "Mock Mode for testing",
-                                color = MaterialTheme.colorScheme.onErrorContainer,
-                                style = MaterialTheme.typography.bodySmall
-                            )
-                        }
-                        Switch(
-                            checked = isMockMode,
-                            onCheckedChange = viewModel::toggleMockMode
-                        )
-                    }
-                }
-            }
 
             LazyColumn(
                 state = listState,
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.surfaceContainerHighest)
+                    .background(Color(0xFF0A0E14))
                     .weight(1f),
                 reverseLayout = false
             ) {
@@ -185,8 +173,8 @@ fun TerminalScreen(
                                         modifier = Modifier
                                             .fillMaxWidth()
                                             .padding(vertical = 4.dp)
-                                            .border(1.dp, ElectricCyan, RoundedCornerShape(8.dp))
-                                            .background(MaterialTheme.colorScheme.surface)
+                                            .neonGlow(ElectricCyan, 8.dp)
+                                            .background(Color(0xFF0D1117), RoundedCornerShape(8.dp))
                                     ) {
                                         Column {
                                             Row(
