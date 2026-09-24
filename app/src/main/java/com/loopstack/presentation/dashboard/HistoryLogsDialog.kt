@@ -19,6 +19,13 @@ import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -40,6 +47,29 @@ fun HistoryLogsDialog(
 ) {
     val logs by viewModel.logs.collectAsState()
     val dateFormat = SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault())
+    var selectedLog by remember { mutableStateOf<com.loopstack.data.local.entity.SessionLogEntity?>(null) }
+
+
+    selectedLog?.let { log ->
+        AlertDialog(
+            onDismissRequest = { selectedLog = null },
+            title = { Text("Session Full Log") },
+            text = {
+                Column(modifier = Modifier.fillMaxWidth().verticalScroll(rememberScrollState())) {
+                    Text("Prompt:", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+                    Text(log.prompt, style = MaterialTheme.typography.bodyMedium)
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text("Response:", fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.secondary)
+                    Text(log.response, style = MaterialTheme.typography.bodyMedium)
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { selectedLog = null }) {
+                    Text("Close")
+                }
+            }
+        )
+    }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -52,7 +82,7 @@ fun HistoryLogsDialog(
                     LazyColumn(modifier = Modifier.fillMaxWidth().weight(1f, fill = false)) {
                         items(logs, key = { it.id }) { log ->
                             Card(
-                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+                                modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp).clickable { selectedLog = log },
                                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerHigh)
                             ) {
                                 Row(

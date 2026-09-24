@@ -104,10 +104,15 @@ class TerminalViewModel @Inject constructor(
                     stream = true
                 )
 
+                var fullResponse = ""
+                var modelName: String? = null
+                val responseLine = TerminalLine(text = "", model = null)
+                _terminalLines.add(responseLine)
+                val lineIndex = _terminalLines.lastIndex
+
                 streamCompletionUseCase(request)
                     .chunked(60L)
                     .collect { chunks ->
-                        var modelName: String? = null
                         val combinedText = chunks.joinToString(separator = "") { chunk ->
                             if (modelName == null && chunk.model != null) {
                                 modelName = chunk.model
@@ -116,16 +121,17 @@ class TerminalViewModel @Inject constructor(
                         }
 
                         if (combinedText.isNotEmpty()) {
-                            _terminalLines.add(TerminalLine(text = combinedText, model = modelName))
-                            while (_terminalLines.size > 2000) {
-
-                                _terminalLines.removeAt(0)
-                            }
+                            fullResponse += combinedText
+                            _terminalLines[lineIndex] = responseLine.copy(text = fullResponse, model = modelName)
                         }
                     }
+
+                while (_terminalLines.size > 2000) {
+                    _terminalLines.removeAt(0)
+                }
+
                 // Save the final text to DB
-                val finalResponse = _terminalLines.lastOrNull()?.text ?: ""
-                sessionLogDao.insertLog(SessionLogEntity(prompt = text, response = finalResponse))
+                sessionLogDao.insertLog(SessionLogEntity(prompt = text, response = fullResponse))
             } catch (e: Exception) {
                 _terminalLines.add(TerminalLine(text = "[ERROR] Connection failed: ${e.message}", isError = true))
             }
