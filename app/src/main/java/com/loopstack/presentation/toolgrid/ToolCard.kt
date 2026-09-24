@@ -12,6 +12,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.loopstack.presentation.dashboard.ToolCardModel
+import com.loopstack.core.theme.neonGlow
+import com.loopstack.core.theme.ElectricCyan
+import com.loopstack.core.theme.glassmorphic
 
 @Composable
 fun ToolCard(tool: ToolCardModel, onClick: () -> Unit = {}) {
@@ -19,19 +22,25 @@ fun ToolCard(tool: ToolCardModel, onClick: () -> Unit = {}) {
         modifier = Modifier
             .fillMaxWidth()
             .padding(8.dp)
-            .clickable(onClick = onClick),
+            .clickable(onClick = onClick)
+            .glassmorphic(alpha = 0.9f)
+            .neonGlow(color = ElectricCyan, alpha = 0.3f),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         )
     ) {
         Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = tool.title, style = MaterialTheme.typography.titleMedium)
+            Text(
+                text = tool.title,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.primary
+            )
             Text(text = tool.subtitle, style = MaterialTheme.typography.bodySmall)
             if (tool.badgeCount > 0) {
                 Text(
                     text = "${tool.badgeCount} notifications",
                     style = MaterialTheme.typography.labelSmall,
-                    color = MaterialTheme.colorScheme.primary
+                    color = MaterialTheme.colorScheme.tertiary
                 )
             }
         }

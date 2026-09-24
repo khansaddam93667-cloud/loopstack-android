@@ -1,4 +1,5 @@
 [versions]
+room = "2.6.1"
 mockito = "5.3.1"
 agp = "8.4.2"
 kotlin = "2.0.0"
@@ -21,6 +22,9 @@ datastore = "1.1.1"
 turbine = "1.1.0"
 
 [libraries]
+room-runtime = { module = "androidx.room:room-runtime", version.ref = "room" }
+room-ktx = { module = "androidx.room:room-ktx", version.ref = "room" }
+room-compiler = { module = "androidx.room:room-compiler", version.ref = "room" }
 mockito-core = { group = "org.mockito", name = "mockito-core", version.ref = "mockito" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
@@ -59,6 +63,7 @@ androidx-datastore-preferences = { module = "androidx.datastore:datastore-prefer
 turbine = { module = "app.cash.turbine:turbine", version.ref = "turbine" }
 
 [plugins]
+ksp = { id = "com.google.devtools.ksp", version = "2.0.0-1.0.21" }
 android-application = { id = "com.android.application", version.ref = "agp" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }

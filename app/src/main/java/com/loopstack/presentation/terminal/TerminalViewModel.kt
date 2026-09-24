@@ -5,8 +5,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.loopstack.data.remote.dto.ChatRequestDto
 import com.loopstack.data.remote.dto.MessageDto
+import com.loopstack.domain.file.FileExportManager
 import com.loopstack.domain.model.LoopbackStatus
 import com.loopstack.domain.model.TerminalLine
+import com.loopstack.data.local.dao.SessionLogDao
+import com.loopstack.data.local.dao.FileRegistryDao
+import com.loopstack.data.local.entity.SessionLogEntity
+import com.loopstack.data.local.entity.FileRegistryEntity
 import com.loopstack.domain.usecase.ObserveLoopbackHealthUseCase
 import com.loopstack.domain.usecase.StreamCompletionUseCase
 import com.loopstack.domain.repository.SettingsRepository
@@ -30,7 +35,10 @@ import kotlinx.coroutines.flow.first
 class TerminalViewModel @Inject constructor(
     private val streamCompletionUseCase: StreamCompletionUseCase,
     observeLoopbackHealthUseCase: ObserveLoopbackHealthUseCase,
-    private val settingsRepository: SettingsRepository
+    private val settingsRepository: SettingsRepository,
+    private val fileExportManager: FileExportManager,
+    private val sessionLogDao: SessionLogDao,
+    private val fileRegistryDao: FileRegistryDao
 ) : ViewModel() {
 
     private val _terminalLines = mutableStateListOf<TerminalLine>()
@@ -61,6 +69,19 @@ class TerminalViewModel @Inject constructor(
         }
     }
 
+
+    fun exportCode(code: String) {
+        viewModelScope.launch {
+            try {
+                fileExportManager.exportCodeSnippet(code)
+                _terminalLines.add(TerminalLine(text = "[SYSTEM] Code saved to Downloads/LoopStack"))
+                fileRegistryDao.insertFile(FileRegistryEntity(fileName = "Code Snippet", filePath = "Downloads/LoopStack"))
+            } catch (e: Exception) {
+                _terminalLines.add(TerminalLine(text = "[ERROR] Failed to save code: ${e.message}", isError = true))
+            }
+        }
+    }
+
     fun updateInputText(text: String) {
         _inputText.value = text
     }
@@ -86,16 +107,25 @@ class TerminalViewModel @Inject constructor(
                 streamCompletionUseCase(request)
                     .chunked(60L)
                     .collect { chunks ->
+                        var modelName: String? = null
                         val combinedText = chunks.joinToString(separator = "") { chunk ->
+                            if (modelName == null && chunk.model != null) {
+                                modelName = chunk.model
+                            }
                             chunk.choices?.firstOrNull()?.delta?.content ?: ""
                         }
+
                         if (combinedText.isNotEmpty()) {
-                            _terminalLines.add(TerminalLine(text = combinedText))
+                            _terminalLines.add(TerminalLine(text = combinedText, model = modelName))
                             while (_terminalLines.size > 2000) {
+
                                 _terminalLines.removeAt(0)
                             }
                         }
                     }
+                // Save the final text to DB
+                val finalResponse = _terminalLines.lastOrNull()?.text ?: ""
+                sessionLogDao.insertLog(SessionLogEntity(prompt = text, response = finalResponse))
             } catch (e: Exception) {
                 _terminalLines.add(TerminalLine(text = "[ERROR] Connection failed: ${e.message}", isError = true))
             }

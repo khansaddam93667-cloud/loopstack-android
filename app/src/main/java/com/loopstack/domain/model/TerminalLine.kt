@@ -5,5 +5,6 @@ import java.util.UUID
 data class TerminalLine(
     val id: String = UUID.randomUUID().toString(),
     val text: String,
-    val isError: Boolean = false
+    val isError: Boolean = false,
+    val model: String? = null
 )
