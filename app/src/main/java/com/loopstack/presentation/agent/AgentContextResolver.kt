@@ -38,5 +38,5 @@ fun resolveAgentContext(
         else -> {
             "User is navigating LoopStack at route: $currentRoute."
         }
-    }
+    }.take(300)
 }

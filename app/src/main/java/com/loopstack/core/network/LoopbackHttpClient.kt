@@ -16,6 +16,8 @@ import io.ktor.utils.io.core.readUTF8Line
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.Dispatchers
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.decodeFromString
@@ -97,5 +99,5 @@ class LoopbackHttpClient @Inject constructor(
         } catch (e: Exception) {
             throw e
         }
-    }
+    }.flowOn(Dispatchers.IO)
 }
