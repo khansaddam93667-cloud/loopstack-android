@@ -2,6 +2,7 @@ package com.loopstack.core.di
 
 import com.loopstack.core.network.LoopbackHttpClient
 import com.loopstack.domain.repository.SettingsRepository
+import com.loopstack.domain.repository.ServerStatusRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,8 +15,9 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideLoopbackHttpClient(
-        settingsRepository: SettingsRepository
+        settingsRepository: SettingsRepository,
+        serverStatusRepository: ServerStatusRepository
     ): LoopbackHttpClient {
-        return LoopbackHttpClient(settingsRepository)
+        return LoopbackHttpClient(settingsRepository, serverStatusRepository)
     }
 }

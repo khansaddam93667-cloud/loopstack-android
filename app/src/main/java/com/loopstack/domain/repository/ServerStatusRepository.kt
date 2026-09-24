@@ -5,4 +5,5 @@ import kotlinx.coroutines.flow.Flow
 
 interface ServerStatusRepository {
     fun observeServerStatus(): Flow<LoopbackStatus>
+    fun forceActiveStatus(providerName: String)
 }

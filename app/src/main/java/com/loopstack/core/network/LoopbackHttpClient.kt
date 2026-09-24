@@ -22,8 +22,11 @@ import kotlinx.serialization.decodeFromString
 import io.ktor.client.engine.HttpClientEngine
 import javax.inject.Inject
 
+import com.loopstack.domain.repository.ServerStatusRepository
+
 class LoopbackHttpClient @Inject constructor(
     private val settingsRepository: SettingsRepository,
+    private val serverStatusRepository: ServerStatusRepository,
     engine: HttpClientEngine = OkHttp.create()
 ) {
     private val json = Json { ignoreUnknownKeys = true; isLenient = true; encodeDefaults = true }
@@ -72,6 +75,7 @@ class LoopbackHttpClient @Inject constructor(
                     throw Exception("HTTP ${response.status.value}: ${response.status.description}")
                 }
                 val channel = response.bodyAsChannel()
+                serverStatusRepository.forceActiveStatus("OmniRoute Local")
                 while (!channel.isClosedForRead) {
                     val line = channel.readUTF8Line(limit = 8192)
                     if (line != null && line.startsWith("data: ")) {
