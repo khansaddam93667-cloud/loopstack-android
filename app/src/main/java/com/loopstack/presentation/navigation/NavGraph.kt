@@ -10,27 +10,30 @@ import com.loopstack.presentation.screens.HomeScreen
 import com.loopstack.presentation.screens.PluginsScreen
 import com.loopstack.presentation.screens.SecurityScreen
 import com.loopstack.presentation.terminal.TerminalScreen
+import com.loopstack.presentation.agent.AgentDrawerWrapper
 
 @Composable
 fun NavGraph() {
     val navController = rememberNavController()
 
-    NavHost(
-        navController = navController,
-        startDestination = "dashboard"
-    ) {
-        composable("dashboard") {
-            HomeScreen(
-                onNavigateToTerminal = { navController.navigate("terminal") },
-                onNavigateTo = { route -> navController.navigate(route) }
-            )
+    AgentDrawerWrapper(navController = navController) {
+        NavHost(
+            navController = navController,
+            startDestination = "dashboard"
+        ) {
+            composable("dashboard") {
+                HomeScreen(
+                    onNavigateToTerminal = { navController.navigate("terminal") },
+                    onNavigateTo = { route -> navController.navigate(route) }
+                )
+            }
+            composable("terminal") {
+                TerminalScreen(navController = navController)
+            }
+            composable("history") { HistoryScreen(onNavigateBack = { navController.popBackStack() }) }
+            composable("analytics") { AnalyticsScreen(onNavigateBack = { navController.popBackStack() }) }
+            composable("security") { SecurityScreen(onNavigateBack = { navController.popBackStack() }) }
+            composable("plugins") { PluginsScreen(onNavigateBack = { navController.popBackStack() }) }
         }
-        composable("terminal") {
-            TerminalScreen(navController = navController)
-        }
-        composable("history") { HistoryScreen(onNavigateBack = { navController.popBackStack() }) }
-        composable("analytics") { AnalyticsScreen(onNavigateBack = { navController.popBackStack() }) }
-        composable("security") { SecurityScreen(onNavigateBack = { navController.popBackStack() }) }
-        composable("plugins") { PluginsScreen(onNavigateBack = { navController.popBackStack() }) }
     }
 }
