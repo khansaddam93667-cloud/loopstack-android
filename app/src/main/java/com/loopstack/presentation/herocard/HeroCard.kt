@@ -42,7 +42,7 @@ fun HeroCard(uiState: HeroCardUiState) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 when (uiState) {
                     is HeroCardUiState.Active -> {
-                        Box(modifier = Modifier.size(12.dp).background(Color(0xFF00FF66), CircleShape).neonGlow(Color(0xFF00FF66), 4.dp))
+                        Box(modifier = Modifier.size(12.dp).background(Color(0xFF4CAF50), CircleShape).neonGlow(Color(0xFF4CAF50), 4.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         SuggestionChip(
                             onClick = { },
@@ -52,7 +52,7 @@ fun HeroCard(uiState: HeroCardUiState) {
                         Text("${uiState.latency}ms latency")
                     }
                     is HeroCardUiState.Degraded -> {
-                        Box(modifier = Modifier.size(12.dp).background(Color(0xFFFFB300), CircleShape).neonGlow(Color(0xFFFFB300), 4.dp))
+                        Box(modifier = Modifier.size(12.dp).background(Color(0xFFFFC107), CircleShape).neonGlow(Color(0xFFFFC107), 4.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         SuggestionChip(
                             onClick = { },
@@ -62,7 +62,7 @@ fun HeroCard(uiState: HeroCardUiState) {
                         Text(uiState.fallbackModel.name)
                     }
                     is HeroCardUiState.Inactive -> {
-                        Box(modifier = Modifier.size(12.dp).background(Color(0xFFFFB300), CircleShape).neonGlow(Color(0xFFFFB300), 4.dp))
+                        Box(modifier = Modifier.size(12.dp).background(Color(0xFFFFC107), CircleShape).neonGlow(Color(0xFFFFC107), 4.dp))
                         Spacer(modifier = Modifier.width(8.dp))
                         SuggestionChip(
                             onClick = { },
