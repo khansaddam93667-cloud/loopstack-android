@@ -1,7 +1,7 @@
 package com.loopstack.domain.model
 
-enum class LoopbackStatus {
-    Active,
-    Inactive,
-    Degraded
+sealed interface LoopbackStatus {
+    data class Active(val providerName: String) : LoopbackStatus
+    data object Inactive : LoopbackStatus
+    data object Degraded : LoopbackStatus
 }

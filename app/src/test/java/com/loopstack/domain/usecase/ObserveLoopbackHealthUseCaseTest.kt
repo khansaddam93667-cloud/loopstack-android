@@ -17,11 +17,11 @@ class ObserveLoopbackHealthUseCaseTest {
 
     @Test
     fun `health check returns Active when status is OK`() = runBlocking {
-        val repo = MockServerStatusRepository(LoopbackStatus.Active)
+        val repo = MockServerStatusRepository(LoopbackStatus.Active("Local Model"))
         val useCase = ObserveLoopbackHealthUseCase(repo)
 
         val status = useCase().first()
-        assertEquals(LoopbackStatus.Active, status)
+        assertEquals(LoopbackStatus.Active("Local Model"), status)
     }
 
     @Test

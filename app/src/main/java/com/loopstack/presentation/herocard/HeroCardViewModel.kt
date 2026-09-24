@@ -53,7 +53,7 @@ class HeroCardViewModel @Inject constructor(
         }
     ) { status, modelSelection ->
         when (status) {
-            LoopbackStatus.Active -> HeroCardUiState.Active(latency = 42L, model = modelSelection)
+            is LoopbackStatus.Active -> HeroCardUiState.Active(latency = 42L, model = ModelSelection(status.providerName))
             LoopbackStatus.Degraded -> HeroCardUiState.Degraded(fallbackModel = modelSelection)
             LoopbackStatus.Inactive -> HeroCardUiState.Inactive
             else -> HeroCardUiState.Checking // Should not reach here typically for this enum but needed for completeness if we had a Checking state from use case

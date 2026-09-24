@@ -6,13 +6,24 @@ import io.ktor.client.HttpClient
 import io.ktor.client.engine.okhttp.OkHttp
 import io.ktor.client.plugins.HttpTimeout
 import io.ktor.client.request.get
+import io.ktor.client.statement.bodyAsText
 import io.ktor.http.isSuccess
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
 import javax.inject.Inject
 
+@Serializable
+data class ModelsResponse(val data: List<ModelData>)
+
+@Serializable
+data class ModelData(val id: String)
+
 class ServerStatusRepositoryImpl @Inject constructor() : ServerStatusRepository {
+
+    private val json = Json { ignoreUnknownKeys = true }
 
     private val client = HttpClient(OkHttp) {
         install(HttpTimeout) {
@@ -27,7 +38,14 @@ class ServerStatusRepositoryImpl @Inject constructor() : ServerStatusRepository 
             val status = try {
                 val response = client.get("http://127.0.0.1:20128/v1/models")
                 if (response.status.isSuccess()) {
-                    LoopbackStatus.Active
+                    val body = response.bodyAsText()
+                    val providerName = try {
+                        val parsed = json.decodeFromString<ModelsResponse>(body)
+                        parsed.data.firstOrNull()?.id ?: "Termux Active"
+                    } catch (e: Exception) {
+                        "Termux Active"
+                    }
+                    LoopbackStatus.Active(providerName)
                 } else {
                     LoopbackStatus.Inactive
                 }
