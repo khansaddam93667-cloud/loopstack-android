@@ -46,6 +46,8 @@ import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.TextButton
+import com.loopstack.presentation.agent.LocalAgentDrawerController
+import androidx.compose.material.icons.filled.Face
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
@@ -72,6 +74,8 @@ fun TerminalScreen(
     val inputText by viewModel.inputText.collectAsState()
     val status by viewModel.loopbackStatus.collectAsState()
 
+    val agentDrawerController = LocalAgentDrawerController.current
+
     val listState = rememberLazyListState()
 
     LaunchedEffect(lines.size) {
@@ -86,6 +90,9 @@ fun TerminalScreen(
             TopAppBar(
                 title = { Text("Terminal") },
                 actions = {
+                    IconButton(onClick = { agentDrawerController.toggle() }) {
+                        Icon(Icons.Default.Face, contentDescription = "Open Agent")
+                    }
                     Box(
                         modifier = Modifier
                             .padding(end = 16.dp)
