@@ -31,6 +31,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.foundation.layout.size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -69,9 +70,7 @@ fun TerminalScreen(
 ) {
     val lines = viewModel.terminalLines
     val inputText by viewModel.inputText.collectAsState()
-    val isMockMode by viewModel.isMockMode.collectAsState()
     val status by viewModel.loopbackStatus.collectAsState()
-    val baseUrl by viewModel.baseUrl.collectAsState()
 
     val listState = rememberLazyListState()
 
@@ -86,6 +85,18 @@ fun TerminalScreen(
         topBar = {
             TopAppBar(
                 title = { Text("Terminal") },
+                actions = {
+                    Box(
+                        modifier = Modifier
+                            .padding(end = 16.dp)
+                            .size(8.dp)
+                            .background(
+                                color = if (status == LoopbackStatus.Active) Color(0xFF00FF66) else Color(0xFFFFB300),
+                                shape = androidx.compose.foundation.shape.CircleShape
+                            )
+                            .neonGlow(if (status == LoopbackStatus.Active) Color(0xFF00FF66) else Color(0xFFFFB300), 4.dp)
+                    )
+                },
                 navigationIcon = {
                     IconButton(onClick = { navController.popBackStack() }) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Back")
