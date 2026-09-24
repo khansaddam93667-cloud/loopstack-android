@@ -1,32 +1,12 @@
 package com.loopstack.domain.usecase
 
-import com.loopstack.core.network.LoopbackHttpClient
 import com.loopstack.domain.model.LoopbackStatus
-import io.ktor.client.request.get
-import io.ktor.http.isSuccess
-import kotlinx.coroutines.delay
+import com.loopstack.domain.repository.ServerStatusRepository
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import javax.inject.Inject
 
 class ObserveLoopbackHealthUseCase @Inject constructor(
-    private val httpClient: LoopbackHttpClient
+    private val serverStatusRepository: ServerStatusRepository
 ) {
-    operator fun invoke(): Flow<LoopbackStatus> = flow {
-        while (true) {
-            val status = try {
-                val baseUrl = httpClient.getBaseUrl()
-                val response = httpClient.healthClient.get("$baseUrl/health")
-                if (response.status.isSuccess()) {
-                    LoopbackStatus.Active
-                } else {
-                    LoopbackStatus.Degraded
-                }
-            } catch (e: Exception) {
-                LoopbackStatus.Inactive
-            }
-            emit(status)
-            delay(10_000L)
-        }
-    }
+    operator fun invoke(): Flow<LoopbackStatus> = serverStatusRepository.observeServerStatus()
 }

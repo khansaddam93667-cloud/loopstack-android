@@ -5,6 +5,11 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -37,14 +42,18 @@ fun HeroCard(uiState: HeroCardUiState) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 when (uiState) {
                     is HeroCardUiState.Active -> {
+                        Box(modifier = Modifier.size(12.dp).background(Color(0xFF00FF66), CircleShape).neonGlow(Color(0xFF00FF66), 4.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
                         SuggestionChip(
                             onClick = { },
-                            label = { Text("Termux Active") }
+                            label = { Text(uiState.model.name) }
                         )
                         Spacer(modifier = Modifier.width(8.dp))
                         Text("${uiState.latency}ms latency")
                     }
                     is HeroCardUiState.Degraded -> {
+                        Box(modifier = Modifier.size(12.dp).background(Color(0xFFFFB300), CircleShape).neonGlow(Color(0xFFFFB300), 4.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
                         SuggestionChip(
                             onClick = { },
                             label = { Text("Degraded") }
@@ -53,6 +62,8 @@ fun HeroCard(uiState: HeroCardUiState) {
                         Text(uiState.fallbackModel.name)
                     }
                     is HeroCardUiState.Inactive -> {
+                        Box(modifier = Modifier.size(12.dp).background(Color(0xFFFFB300), CircleShape).neonGlow(Color(0xFFFFB300), 4.dp))
+                        Spacer(modifier = Modifier.width(8.dp))
                         SuggestionChip(
                             onClick = { },
                             label = { Text("Inactive") }

@@ -91,10 +91,10 @@ fun TerminalScreen(
                             .padding(end = 16.dp)
                             .size(8.dp)
                             .background(
-                                color = if (status == LoopbackStatus.Active) Color(0xFF00FF66) else Color(0xFFFFB300),
+                                color = if (status is LoopbackStatus.Active) Color(0xFF00FF66) else Color(0xFFFFB300),
                                 shape = androidx.compose.foundation.shape.CircleShape
                             )
-                            .neonGlow(if (status == LoopbackStatus.Active) Color(0xFF00FF66) else Color(0xFFFFB300), 4.dp)
+                            .neonGlow(if (status is LoopbackStatus.Active) Color(0xFF00FF66) else Color(0xFFFFB300), 4.dp)
                     )
                 },
                 navigationIcon = {

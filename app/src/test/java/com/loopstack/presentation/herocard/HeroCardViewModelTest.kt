@@ -72,9 +72,9 @@ class HeroCardViewModelTest {
             assertTrue(initialState is HeroCardUiState.Checking)
 
             // Emit Active
-            healthFlow.emit(LoopbackStatus.Active)
+            healthFlow.emit(LoopbackStatus.Active("Local Model"))
             val activeState = awaitItem() as HeroCardUiState.Active
-            assertEquals("Llama-3", activeState.model.name)
+            assertEquals("Local Model", activeState.model.name)
 
             // Emit Degraded
             healthFlow.emit(LoopbackStatus.Degraded)
@@ -82,9 +82,9 @@ class HeroCardViewModelTest {
             assertEquals("Llama-3", degradedState.fallbackModel.name)
 
             // Emit Active again
-            healthFlow.emit(LoopbackStatus.Active)
+            healthFlow.emit(LoopbackStatus.Active("Local Model"))
             val activeState2 = awaitItem() as HeroCardUiState.Active
-            assertEquals("Llama-3", activeState2.model.name)
+            assertEquals("Local Model", activeState2.model.name)
 
             cancelAndIgnoreRemainingEvents()
         }
