@@ -29,7 +29,7 @@ private val DarkColorScheme = darkColorScheme(
 @Composable
 fun LoopStackTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false, // Disable dynamic color to force custom neon theme
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {

@@ -37,6 +37,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import com.loopstack.domain.model.LoopbackStatus
 import com.loopstack.domain.model.TerminalLine
+import androidx.compose.foundation.border
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.KeyboardArrowDown
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.TextButton
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.Arrangement
+import com.loopstack.core.theme.ElectricCyan
+import com.loopstack.core.theme.CyberViolet
 
 fun LazyListState.isAtBottom(): Boolean {
     val layoutInfo = this.layoutInfo
@@ -148,13 +160,79 @@ fun TerminalScreen(
                     items = lines,
                     key = { it.id }
                 ) { line ->
-                    Text(
-                        text = line.text,
-                        fontFamily = FontFamily.Monospace,
-                        color = if (line.isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.bodyMedium,
-                        modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp)
-                    )
+                    Column(modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)) {
+                        if (line.model != null) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(Icons.Filled.PlayArrow, contentDescription = "Model", tint = CyberViolet)
+                                Text(
+                                    text = "[MODEL: ${line.model}]",
+                                    color = CyberViolet,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    modifier = Modifier.padding(start = 4.dp, bottom = 2.dp)
+                                )
+                            }
+                        }
+
+                        if (line.text.contains("```")) {
+                            val parts = line.text.split("```")
+                            parts.forEachIndexed { index, part ->
+                                if (index % 2 == 1) {
+                                    val codeLines = part.split("\n")
+                                    val language = codeLines.firstOrNull()?.trim() ?: "code"
+                                    val codeContent = if (codeLines.size > 1) codeLines.drop(1).joinToString("\n") else ""
+
+                                    Box(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(vertical = 4.dp)
+                                            .border(1.dp, ElectricCyan, RoundedCornerShape(8.dp))
+                                            .background(MaterialTheme.colorScheme.surface)
+                                    ) {
+                                        Column {
+                                            Row(
+                                                modifier = Modifier
+                                                    .fillMaxWidth()
+                                                    .background(MaterialTheme.colorScheme.surfaceContainerHigh)
+                                                    .padding(horizontal = 8.dp, vertical = 4.dp),
+                                                horizontalArrangement = Arrangement.SpaceBetween,
+                                                verticalAlignment = Alignment.CenterVertically
+                                            ) {
+                                                Text(language, color = ElectricCyan, style = MaterialTheme.typography.labelSmall)
+                                                TextButton(
+                                                    onClick = { viewModel.exportCode(codeContent) },
+                                                    colors = ButtonDefaults.textButtonColors(contentColor = ElectricCyan)
+                                                ) {
+                                                    Icon(Icons.Filled.KeyboardArrowDown, contentDescription = "Save Code", modifier = Modifier.padding(end = 4.dp))
+                                                    Text("Save Code")
+                                                }
+                                            }
+                                            Text(
+                                                text = codeContent,
+                                                fontFamily = FontFamily.Monospace,
+                                                color = MaterialTheme.colorScheme.onSurface,
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                modifier = Modifier.padding(8.dp)
+                                            )
+                                        }
+                                    }
+                                } else if (part.isNotBlank()) {
+                                    Text(
+                                        text = part,
+                                        fontFamily = FontFamily.Monospace,
+                                        color = if (line.isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+                                        style = MaterialTheme.typography.bodyMedium
+                                    )
+                                }
+                            }
+                        } else {
+                            Text(
+                                text = line.text,
+                                fontFamily = FontFamily.Monospace,
+                                color = if (line.isError) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurface,
+                                style = MaterialTheme.typography.bodyMedium
+                            )
+                        }
+                    }
                 }
             }
         }

@@ -15,13 +15,18 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.loopstack.core.theme.neonGlow
+import com.loopstack.core.theme.CyberViolet
+import com.loopstack.core.theme.glassmorphic
 
 @Composable
 fun HeroCard(uiState: HeroCardUiState) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(16.dp),
+            .padding(16.dp)
+            .glassmorphic(alpha = 0.85f)
+            .neonGlow(color = CyberViolet, alpha = 0.5f, radius = 12.dp),
         colors = CardDefaults.cardColors(
             containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
         )

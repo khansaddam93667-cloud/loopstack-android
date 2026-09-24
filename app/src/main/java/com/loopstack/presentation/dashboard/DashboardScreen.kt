@@ -34,6 +34,8 @@ fun DashboardScreen(
     var showHistoryLogsDialog by remember { mutableStateOf(false) }
     var showAnalyticsSystemDialog by remember { mutableStateOf(false) }
     var showModelGatewayDialog by remember { mutableStateOf(false) }
+    var showDatabaseDialog by remember { mutableStateOf(false) }
+    var showSecurityDialog by remember { mutableStateOf(false) }
     var genericStatusDialogTitle by remember { mutableStateOf<String?>(null) }
 
     if (showSettingsDialog) {
@@ -54,6 +56,14 @@ fun DashboardScreen(
 
     if (showModelGatewayDialog) {
         ModelGatewayDialog(onDismiss = { showModelGatewayDialog = false })
+    }
+
+    if (showDatabaseDialog) {
+        DatabaseDialog(onDismiss = { showDatabaseDialog = false })
+    }
+
+    if (showSecurityDialog) {
+        SecurityDialog(onDismiss = { showSecurityDialog = false })
     }
 
     genericStatusDialogTitle?.let { title ->
@@ -82,6 +92,8 @@ fun DashboardScreen(
                             "History Logs" -> showHistoryLogsDialog = true
                             "Analytics / System" -> showAnalyticsSystemDialog = true
                             "Model Gateway" -> showModelGatewayDialog = true
+                            "Database" -> showDatabaseDialog = true
+                            "Security" -> showSecurityDialog = true
                             else -> genericStatusDialogTitle = tool.title
                         }
                     }
