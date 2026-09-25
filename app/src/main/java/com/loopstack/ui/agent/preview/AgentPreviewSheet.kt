@@ -34,8 +34,7 @@ fun AgentPreviewSheet(
 
     ModalBottomSheet(
         onDismissRequest = onDismiss,
-        modifier = Modifier.fillMaxHeight(0.9f),
-        windowInsets = WindowInsets.navigationBars
+        modifier = Modifier.fillMaxHeight(0.9f)
     ) {
         Column(
             modifier = Modifier
