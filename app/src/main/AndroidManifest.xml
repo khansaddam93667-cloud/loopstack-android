@@ -35,7 +35,7 @@
             android:foregroundServiceType="specialUse">
             <property
                 android:name="android.app.PROPERTY_SPECIAL_USE_FGS_SUBTYPE"
-                android:value="loopback_server" />
+                android:value="Local_AI_Loopback_Routing" />
         </service>
     </application>
 
