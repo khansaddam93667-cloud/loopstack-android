@@ -59,7 +59,7 @@ class AgentViewModel @Inject constructor(
     val recentLogSummary: StateFlow<String> = sessionLogDao.getAllLogs()
         .map { logs ->
             if (logs.isEmpty()) "No recent logs."
-            else logs.take(3).joinToString(separator = " | ") { it.prompt.take(20) + "..." }
+            else logs.take(5).joinToString(separator = " | ") { it.prompt.take(20) + "..." }.take(300)
         }
         .catch { emit("Failed to load logs") }
         .stateIn(
@@ -79,16 +79,19 @@ class AgentViewModel @Inject constructor(
         _messages.add(AgentMessage(text = text, isUser = true))
         _inputText.value = ""
 
-        val promptText = if (contextualPrefix.isNotBlank()) {
-            "System Context: $contextualPrefix\n\nUser Request: $text"
+        val messagesList = if (contextualPrefix.isNotBlank()) {
+            listOf(
+                MessageDto(role = "system", content = contextualPrefix),
+                MessageDto(role = "user", content = text)
+            )
         } else {
-            text
+            listOf(MessageDto(role = "user", content = text))
         }
 
         viewModelScope.launch {
             try {
                 val request = ChatRequestDto(
-                    messages = listOf(MessageDto(role = "user", content = promptText)),
+                    messages = messagesList,
                     stream = true
                 )
 
