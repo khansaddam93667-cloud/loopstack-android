@@ -119,3 +119,6 @@ tasks.whenTaskAdded {
         enabled = false
     }
 }
+dependencies {
+    implementation(libs.androidx.material.icons.extended)
+}
