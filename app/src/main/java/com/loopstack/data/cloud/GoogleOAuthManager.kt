@@ -4,7 +4,6 @@ import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.request.forms.submitForm
 
-
 import io.ktor.http.Parameters
 
 import io.ktor.http.isSuccess
@@ -36,12 +35,12 @@ class GoogleOAuthManager @Inject constructor(
         private const val TOKEN_ENDPOINT = "https://oauth2.googleapis.com/token"
     }
 
-    // In a real app, these would be securely provided via DataStore or Keychain
-    // and not hardcoded. For this pipeline implementation, we assume we have a
-    // valid refresh token and client credentials.
-    private var clientId: String = "YOUR_CLIENT_ID"
-    private var clientSecret: String = "YOUR_CLIENT_SECRET"
-    private var refreshToken: String = "YOUR_REFRESH_TOKEN"
+    // Credentials should be injected or set via setCredentials before use
+
+
+    private var clientId: String? = null
+    private var clientSecret: String? = null
+    private var refreshToken: String? = null
 
     fun setCredentials(clientId: String, clientSecret: String, refreshToken: String) {
         this.clientId = clientId
@@ -63,9 +62,9 @@ class GoogleOAuthManager @Inject constructor(
             val response = httpClient.submitForm(
                 url = TOKEN_ENDPOINT,
                 formParameters = Parameters.build {
-                    append("client_id", clientId)
-                    append("client_secret", clientSecret)
-                    append("refresh_token", refreshToken)
+                    append("client_id", clientId ?: "")
+                    append("client_secret", clientSecret ?: "")
+                    append("refresh_token", refreshToken ?: "")
                     append("grant_type", "refresh_token")
                 }
             )
