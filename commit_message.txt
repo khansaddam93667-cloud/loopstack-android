@@ -1,0 +1,5 @@
+fix: duplicate WorkManager initializer node in AndroidManifest
+
+- Resolves CI failure: `Manifest merger failed : Attribute provider#androidx.startup.InitializationProvider@authorities value`
+- Replaces broken sed patches causing duplicate InitializationProvider tags and incorrect variable escaping for `applicationId`.
+- Re-writes AndroidManifest with a clean `<provider>` block containing the correct `tools:node="remove"` meta-data for App Startup initialization to fix Hilt crashing.
