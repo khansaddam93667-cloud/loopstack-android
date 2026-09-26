@@ -1,6 +1,5 @@
-fix: provide HttpClient in NetworkModule for Hilt Worker
+fix: duplicate WorkManager initializer node in AndroidManifest
 
-- Resolves CI failure: `io.ktor.client.HttpClient cannot be provided without an @Inject constructor or an @Provides-annotated method`.
-- Fixes `NetworkModule` to provide `HttpClient(OkHttp)` so `DriveSyncRepository` injected via `WorkspaceSyncWorker` can be instantiated by Hilt.
-- Removes duplicate `InitializationProvider` overrides in `AndroidManifest.xml`.
-- Adds Ktor ContentNegotiation/Json dependencies to `build.gradle.kts`.
+- Resolves CI failure: `Manifest merger failed : Attribute provider#androidx.startup.InitializationProvider@authorities value`
+- Replaces broken sed patches causing duplicate InitializationProvider tags and incorrect variable escaping for `applicationId`.
+- Re-writes AndroidManifest with a clean `<provider>` block containing the correct `tools:node="remove"` meta-data for App Startup initialization to fix Hilt crashing.
