@@ -55,6 +55,8 @@ import androidx.compose.foundation.layout.Arrangement
 import com.loopstack.core.theme.ElectricCyan
 import com.loopstack.core.theme.neonGlow
 import com.loopstack.core.theme.CyberViolet
+import java.io.File
+import com.loopstack.ui.agent.preview.AgentPreviewSheet
 
 fun LazyListState.isAtBottom(): Boolean {
     val layoutInfo = this.layoutInfo
@@ -75,6 +77,8 @@ fun TerminalScreen(
     val status by viewModel.loopbackStatus.collectAsState()
 
     val agentDrawerController = LocalAgentDrawerController.current
+
+    val activePreviewFile by viewModel.activePreviewFile.collectAsState()
 
     val listState = rememberLazyListState()
 
@@ -231,5 +235,12 @@ fun TerminalScreen(
                 }
             }
         }
+    }
+
+    activePreviewFile?.let { path ->
+        AgentPreviewSheet(
+            previewFile = File(path),
+            onDismiss = viewModel::dismissPreview
+        )
     }
 }
