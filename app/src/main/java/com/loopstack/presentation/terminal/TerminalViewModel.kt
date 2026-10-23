@@ -41,6 +41,16 @@ class TerminalViewModel @Inject constructor(
     private val fileRegistryDao: FileRegistryDao
 ) : ViewModel() {
 
+    val activePreviewFile = MutableStateFlow<String?>(null)
+
+    fun triggerPreview(filePath: String) {
+        activePreviewFile.value = filePath
+    }
+
+    fun dismissPreview() {
+        activePreviewFile.value = null
+    }
+
     private val _terminalLines = mutableStateListOf<TerminalLine>()
     val terminalLines: List<TerminalLine> get() = _terminalLines
 
@@ -123,6 +133,13 @@ class TerminalViewModel @Inject constructor(
                         if (combinedText.isNotEmpty()) {
                             fullResponse += combinedText
                             _terminalLines[lineIndex] = responseLine.copy(text = fullResponse, model = modelName)
+
+                            val jsonMatch = """\{[^}]*"tool"\s*:\s*"preview_file"[^}]*"path"\s*:\s*"([^"]+)"[^}]*\}""".toRegex().find(fullResponse)
+                            val cmdMatch = """preview_file\s+([^\s]+)""".toRegex().find(fullResponse)
+                            val match = jsonMatch ?: cmdMatch
+                            if (match != null) {
+                                triggerPreview(match.groupValues[1])
+                            }
                         }
                     }
 
